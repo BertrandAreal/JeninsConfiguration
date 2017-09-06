@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Permet de compiler le projet pg_repack. Nécessite l&apos;installation de postgresql pour compiler à travers la variable d&apos;environnement PostgreSQL64</description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.4">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/BertrandAreal/pg_repack.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/postgres_9.6</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.BatchFile>
+      <command>&quot;C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe&quot; msvc\pg_repack.2013.sln /t:Build /nodeReuse:false /m /nologo /p:Configuration=&quot;Release&quot; /p:Platform=&quot;x64&quot; /p:VisualStudioVersion=12.0 /p:SkipNonexistentProjects=Build /p:ToolsVersion=4.0 /verbosity:n /p:msbuildextensionspath=&quot;C:\Program Files (x86)\msbuild&quot;</command>
+    </hudson.tasks.BatchFile>
+    <hudson.tasks.BatchFile>
+      <command>xcopy /E /Y /I msvc\share .\install\tmp\share&#xd;
+xcopy /Y msvc\bin\x64\Release\pg_repack.exe .\install\tmp\bin\pg_repack.exe*&#xd;
+xcopy /Y msvc\bin\x64\Release\pg_repack.dll .\install\tmp\lib\pg_repack.dll*&#xd;
+xcopy /Y msvc\bin\x64\Release\pg_repack.exp .\install\tmp\lib\pg_repack.exp*&#xd;
+xcopy /Y msvc\bin\x64\Release\pg_repack.lib .\install\tmp\lib\pg_repack.lib*&#xd;
+cd install\tmp&#xd;
+&quot;C:\Program Files\7-Zip\7z.exe&quot; a -tzip ..\pgrepack_%POSTGRESQL64:~-3%.zip .\*&#xd;
+cd ../..&#xd;
+rmdir /S /Q install\tmp</command>
+    </hudson.tasks.BatchFile>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>install/pgrepack_*.zip</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>true</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
+  <buildWrappers/>
+</project>

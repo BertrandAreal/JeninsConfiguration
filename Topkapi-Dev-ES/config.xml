@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Project Topkapi x86 :&#xd;
+- Rocket, LTS, TDS et autres outils du SCADA&#xd;
+- Protocoles&#xd;
+- Langue Espagnole : OptionTopkapiLanguagePreprocessor=&apos;VERESP&apos; et OptionTopkapiLanguage=ES&#xd;
+(NB: l&apos;UI du setup est actuellement en Anglais)&#xd;
+Bootstrapper :&#xd;
+-  Langue Espagnole : OptionTopkapiLanguage=ES&#xd;
+(NB: l&apos;UI du Bootstrapper est actuellement en Anglais)</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>5</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>3</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+  </properties>
+  <scm class="hudson.scm.SubversionSCM" plugin="subversion@2.5.7">
+    <locations>
+      <hudson.scm.SubversionSCM_-ModuleLocation>
+        <remote>https://moselle.areal.fr/svn/Topkapi/RocketD</remote>
+        <credentialsId>efd3cd5b-cb67-4673-92de-4168942eaa16</credentialsId>
+        <local>RocketD</local>
+        <depthOption>infinity</depthOption>
+        <ignoreExternalsOption>true</ignoreExternalsOption>
+      </hudson.scm.SubversionSCM_-ModuleLocation>
+    </locations>
+    <excludedRegions></excludedRegions>
+    <includedRegions></includedRegions>
+    <excludedUsers></excludedUsers>
+    <excludedRevprop></excludedRevprop>
+    <excludedCommitMessages></excludedCommitMessages>
+    <workspaceUpdater class="hudson.scm.subversion.UpdateWithCleanUpdater"/>
+    <ignoreDirPropChanges>false</ignoreDirPropChanges>
+    <filterChangelog>false</filterChangelog>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.SCMTrigger>
+      <spec># tous les jours à X heures
+H 21 * * *</spec>
+      <ignorePostCommitHooks>false</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.BatchFile>
+      <command>&quot;RocketD\PERLSCRIPT\.nuget\Nuget.exe&quot; restore &quot;RocketD\PERLSCRIPT\global_build.sln&quot;</command>
+    </hudson.tasks.BatchFile>
+    <hudson.tasks.BatchFile>
+      <command>&quot;RocketD\PERLSCRIPT\fastbuild.exe&quot; &quot;./RocketD/PERLSCRIPT/delphi_build/&quot; -AUTOBUILD -AUTOCLOSE OptionTopkapiLanguagePreprocessor=&apos;VERESP&apos;</command>
+    </hudson.tasks.BatchFile>
+    <hudson.plugins.msbuild.MsBuildBuilder plugin="msbuild@1.25">
+      <msBuildName>4.0</msBuildName>
+      <msBuildFile>PERLSCRIPT/global_build.sln</msBuildFile>
+      <cmdLineArgs>/t:Build /nodeReuse:false /m /nologo /p:Configuration=&quot;Release&quot; /p:Platform=&quot;Mixed Platforms&quot; /p:VisualStudioVersion=12.0 /p:SkipNonexistentProjects=Build /p:ToolsVersion=4.0 /verbosity:n /p:msbuildextensionspath=&quot;C:\Program Files (x86)\msbuild&quot; /p:OptionTopkapiLanguage=ES</cmdLineArgs>
+      <buildVariablesAsProperties>false</buildVariablesAsProperties>
+      <continueOnBuildFailure>false</continueOnBuildFailure>
+      <unstableIfWarnings>false</unstableIfWarnings>
+    </hudson.plugins.msbuild.MsBuildBuilder>
+    <hudson.plugins.msbuild.MsBuildBuilder plugin="msbuild@1.25">
+      <msBuildName>4.0</msBuildName>
+      <msBuildFile>PERLSCRIPT/global_build.sln</msBuildFile>
+      <cmdLineArgs>/t:Setup\Areal_TopkapiInstaller_MultiBuildLauncher:Setup /nodeReuse:false /m /nologo /p:Configuration=&quot;Release&quot; /p:Platform=&quot;Mixed Platforms&quot; /p:VisualStudioVersion=12.0 /p:SkipNonexistentProjects=Build /p:ToolsVersion=4.0 /verbosity:n /p:msbuildextensionspath=&quot;C:\Program Files (x86)\msbuild&quot; /p:OptionTopkapiLanguage=ES
+</cmdLineArgs>
+      <buildVariablesAsProperties>false</buildVariablesAsProperties>
+      <continueOnBuildFailure>false</continueOnBuildFailure>
+      <unstableIfWarnings>false</unstableIfWarnings>
+    </hudson.plugins.msbuild.MsBuildBuilder>
+    <hudson.plugins.msbuild.MsBuildBuilder plugin="msbuild@1.25">
+      <msBuildName>4.0</msBuildName>
+      <msBuildFile>PERLSCRIPT/global_build.sln</msBuildFile>
+      <cmdLineArgs>/t:Setup\Areal_TopkapiInstaller_Bootstrapper_wixstdba_MultiBuildLauncher:Setup /nodeReuse:false /m /nologo /p:Configuration=&quot;Release&quot; /p:Platform=&quot;Mixed Platforms&quot; /p:VisualStudioVersion=12.0 /p:SkipNonexistentProjects=Build /p:ToolsVersion=4.0 /verbosity:n /p:msbuildextensionspath=&quot;C:\Program Files (x86)\msbuild&quot; /p:OptionTopkapiLanguage=ES</cmdLineArgs>
+      <buildVariablesAsProperties>false</buildVariablesAsProperties>
+      <continueOnBuildFailure>false</continueOnBuildFailure>
+      <unstableIfWarnings>false</unstableIfWarnings>
+    </hudson.plugins.msbuild.MsBuildBuilder>
+    <hudson.tasks.BatchFile>
+      <command>&quot;C:\Program Files (x86)\Windows Kits\8.1\Debuggers\x64\symstore.exe&quot; add /f RocketD\*.pdb /r /s \\NAS\Symbols\Dev /t &quot;Topkapi ES&quot; /compress /v &quot;Build %SVN_REVISION%&quot; /c &quot;automated jenkins build&quot;&#xd;
+</command>
+    </hudson.tasks.BatchFile>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>RocketD\Setup\**\*.msi, RocketD\Setup\Areal.TopkapiInstaller.Bootstrapper.wixstdba\bin\Release\**\*.exe</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>true</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <htmlpublisher.HtmlPublisher plugin="htmlpublisher@1.11">
+      <reportTargets>
+        <htmlpublisher.HtmlPublisherTarget>
+          <reportName>Couverture et métrique de code</reportName>
+          <reportDir>RocketD\PERLSCRIPT\CodeCoverageReport</reportDir>
+          <reportFiles>index.htm</reportFiles>
+          <alwaysLinkToLastBuild>false</alwaysLinkToLastBuild>
+          <keepAll>true</keepAll>
+          <allowMissing>true</allowMissing>
+        </htmlpublisher.HtmlPublisherTarget>
+      </reportTargets>
+    </htmlpublisher.HtmlPublisher>
+    <xunit plugin="xunit@1.101">
+      <types>
+        <NUnitJunitHudsonTestType>
+          <pattern>**/test_output*.xml</pattern>
+          <skipNoTestFiles>true</skipNoTestFiles>
+          <failIfNotNew>true</failIfNotNew>
+          <deleteOutputFiles>false</deleteOutputFiles>
+          <stopProcessingIfError>false</stopProcessingIfError>
+        </NUnitJunitHudsonTestType>
+      </types>
+      <thresholds>
+        <org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
+          <unstableThreshold>5</unstableThreshold>
+          <unstableNewThreshold></unstableNewThreshold>
+          <failureThreshold>20</failureThreshold>
+          <failureNewThreshold></failureNewThreshold>
+        </org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
+        <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
+          <unstableThreshold></unstableThreshold>
+          <unstableNewThreshold></unstableNewThreshold>
+          <failureThreshold></failureThreshold>
+          <failureNewThreshold></failureNewThreshold>
+        </org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
+      </thresholds>
+      <thresholdMode>1</thresholdMode>
+      <extraConfiguration>
+        <testTimeMargin>3000</testTimeMargin>
+      </extraConfiguration>
+    </xunit>
+    <hudson.tasks.Mailer plugin="mailer@1.17">
+      <recipients></recipients>
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+    <jenkins.plugins.publish__over__ssh.BapSshPublisherPlugin plugin="publish-over-ssh@1.14">
+      <consolePrefix>SSH: </consolePrefix>
+      <delegate>
+        <publishers>
+          <jenkins.plugins.publish__over__ssh.BapSshPublisher>
+            <configName>Arealtheding</configName>
+            <verbose>false</verbose>
+            <transfers>
+              <jenkins.plugins.publish__over__ssh.BapSshTransfer>
+                <remoteDirectory></remoteDirectory>
+                <sourceFiles></sourceFiles>
+                <excludes></excludes>
+                <removePrefix></removePrefix>
+                <remoteDirectorySDF>false</remoteDirectorySDF>
+                <flatten>false</flatten>
+                <cleanRemote>false</cleanRemote>
+                <noDefaultExcludes>false</noDefaultExcludes>
+                <makeEmptyDirs>false</makeEmptyDirs>
+                <patternSeparator>[, ]+</patternSeparator>
+                <execCommand>rm -f -- /data/www/ftpprive/Setup/Dev/ES/*.msi /data/www/ftpprive/Setup/Dev/ES/Areal.Topkapi*.ES.*.exe</execCommand>
+                <execTimeout>120000</execTimeout>
+                <usePty>false</usePty>
+              </jenkins.plugins.publish__over__ssh.BapSshTransfer>
+              <jenkins.plugins.publish__over__ssh.BapSshTransfer>
+                <remoteDirectory>Setup/Dev/ES</remoteDirectory>
+                <sourceFiles>RocketD/Setup/Areal.TopkapiInstaller/bin/Release/**/*.msi</sourceFiles>
+                <excludes></excludes>
+                <removePrefix>RocketD/Setup/Areal.TopkapiInstaller/bin/Release</removePrefix>
+                <remoteDirectorySDF>false</remoteDirectorySDF>
+                <flatten>false</flatten>
+                <cleanRemote>false</cleanRemote>
+                <noDefaultExcludes>false</noDefaultExcludes>
+                <makeEmptyDirs>false</makeEmptyDirs>
+                <patternSeparator>[, ]+</patternSeparator>
+                <execCommand></execCommand>
+                <execTimeout>120000</execTimeout>
+                <usePty>false</usePty>
+              </jenkins.plugins.publish__over__ssh.BapSshTransfer>
+              <jenkins.plugins.publish__over__ssh.BapSshTransfer>
+                <remoteDirectory>Setup/Dev/ES</remoteDirectory>
+                <sourceFiles>RocketD/Setup/\Areal.TopkapiInstaller.Bootstrapper.wixstdba/bin/Release/**/*.exe</sourceFiles>
+                <excludes></excludes>
+                <removePrefix>RocketD/Setup/Areal.TopkapiInstaller.Bootstrapper.wixstdba/bin/Release</removePrefix>
+                <remoteDirectorySDF>false</remoteDirectorySDF>
+                <flatten>false</flatten>
+                <cleanRemote>false</cleanRemote>
+                <noDefaultExcludes>false</noDefaultExcludes>
+                <makeEmptyDirs>false</makeEmptyDirs>
+                <patternSeparator>[, ]+</patternSeparator>
+                <execCommand></execCommand>
+                <execTimeout>120000</execTimeout>
+                <usePty>false</usePty>
+              </jenkins.plugins.publish__over__ssh.BapSshTransfer>
+            </transfers>
+            <useWorkspaceInPromotion>false</useWorkspaceInPromotion>
+            <usePromotionTimestamp>false</usePromotionTimestamp>
+          </jenkins.plugins.publish__over__ssh.BapSshPublisher>
+        </publishers>
+        <continueOnError>false</continueOnError>
+        <failOnError>false</failOnError>
+        <alwaysPublishFromMaster>false</alwaysPublishFromMaster>
+        <hostConfigurationAccess class="jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin" reference="../.."/>
+      </delegate>
+    </jenkins.plugins.publish__over__ssh.BapSshPublisherPlugin>
+  </publishers>
+  <buildWrappers/>
+</project>
